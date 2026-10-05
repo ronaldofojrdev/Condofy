@@ -1,0 +1,14 @@
+{
+  "expo": {
+    "name": "Condofy",
+    "slug": "condofy",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "backgroundColor": "#ffffff",
+    "extra": {
+      "eas": {
+        "projectId": "56516128-f7d1-4d99-ad46-15e1a4e06187"
+      }
+    }
+  }
+}

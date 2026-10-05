@@ -1,0 +1,58 @@
+import { NextRequest, NextResponse } from "next/server";
+import { getSupabaseAdminClient, getSupabaseAuthClient } from "@/lib/supabase/admin";
+
+export const dynamic = "force-dynamic";
+
+type ProfileRow = {
+  condominio_id: string;
+  role: "SINDICO" | "PORTEIRO" | "MORADOR";
+};
+
+export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
+  const token = (request.headers.get("authorization") ?? "").replace("Bearer ", "").trim();
+  if (!token) return NextResponse.json({ error: "Não autorizado." }, { status: 401 });
+
+  const supabaseAuth = getSupabaseAuthClient();
+  const supabaseAdmin = getSupabaseAdminClient();
+  if (!supabaseAuth || !supabaseAdmin) return NextResponse.json({ error: "Serviço indisponível." }, { status: 503 });
+
+  const { data: userData, error: userError } = await supabaseAuth.auth.getUser(token);
+  if (userError || !userData.user) return NextResponse.json({ error: "Não autorizado." }, { status: 401 });
+
+  const { data: profile, error: profileError } = await supabaseAdmin
+    .from("perfis_usuario")
+    .select("condominio_id, role")
+    .eq("usuario_id", userData.user.id)
+    .eq("ativo", true)
+    .limit(1)
+    .single<ProfileRow>();
+
+  if (profileError || !profile?.condominio_id) {
+    return NextResponse.json({ error: "Condomínio não encontrado." }, { status: 403 });
+  }
+
+  if (profile.role !== "PORTEIRO" && profile.role !== "SINDICO") {
+    return NextResponse.json({ error: "Sem permissão." }, { status: 403 });
+  }
+
+  // Verificar que o veículo pertence ao condomínio
+  const { data: veiculo } = await supabaseAdmin
+    .from("veiculos")
+    .select("id, condominio_id")
+    .eq("id", params.id)
+    .single<{ id: string; condominio_id: string }>();
+
+  if (!veiculo || veiculo.condominio_id !== profile.condominio_id) {
+    return NextResponse.json({ error: "Veículo não encontrado." }, { status: 404 });
+  }
+
+  // Soft delete — marca como inativo
+  const { error: updateError } = await supabaseAdmin
+    .from("veiculos")
+    .update({ ativo: false })
+    .eq("id", params.id);
+
+  if (updateError) return NextResponse.json({ error: updateError.message }, { status: 400 });
+
+  return NextResponse.json({ ok: true });
+}

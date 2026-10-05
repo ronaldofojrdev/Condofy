@@ -1,0 +1,28 @@
+{
+  "name": "condominio-mvp",
+  "private": true,
+  "version": "0.1.0",
+  "workspaces": [
+    "apps/*"
+  ],
+  "scripts": {
+    "dev:web": "npm run dev -w apps/web",
+    "dev:api": "npm run dev -w apps/api",
+    "dev:mobile": "npm run start -w apps/mobile",
+    "build:web": "npm run build -w apps/web",
+    "start:web": "npm run start -w apps/web",
+    "start:api": "npm run start -w apps/api",
+    "build:backoffice": "npm run build -w backoffice",
+    "start:backoffice": "npm run start -w backoffice"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "dependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "sharp": "^0.34.5"
+  }
+}

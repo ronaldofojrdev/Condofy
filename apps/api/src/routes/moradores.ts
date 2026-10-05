@@ -1,0 +1,1 @@
+export { membrosRouter as moradoresRouter } from "./membros.js";
