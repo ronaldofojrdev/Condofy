@@ -1,5 +1,7 @@
 # Condofy
 
+![Status](https://img.shields.io/badge/status-em%20desenvolvimento-orange) ![Next.js](https://img.shields.io/badge/Next.js-14-000000) ![Supabase](https://img.shields.io/badge/Supabase-3ECF8E) ![License](https://img.shields.io/badge/license-MIT-lightgrey)
+
 Sistema de gestão para condomínios. O morador acompanha encomendas, visitas, reservas do salão e avisos; o porteiro registra o que chega e quem entra; o síndico vê tudo em um painel. Ainda não terminei, então algumas telas estão incompletas.
 
 ## O que já existe
